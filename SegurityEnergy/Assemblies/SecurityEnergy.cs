@@ -304,7 +304,115 @@ namespace SecurityEnergy
             return true;
         }
     }
+//				GEMINIS
 
+    public class BuildingTrapSpike : Building_Trap
+    {
+        private CompPowerTrader powerComp;
+        private int currentCharge = 5;
+        private int ticksSinceLastActivation = 0;
+        private const int MaxCharge = 5;
+        private const float EnergyChargeConsumption = 15f;
+        private const float EnergyStandbyConsumption = 25f;
+        private const int RecargaDelayTicks = 180; // 3 segundos * 60 ticks/segundo
+
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+            base.SpawnSetup(map, respawningAfterLoad);
+            this.powerComp = base.GetComp<CompPowerTrader>();
+        }
+
+        public void Tick()
+        {
+            base.Tick();
+            
+            // Consumo de energía
+            if (this.powerComp != null)
+            {
+                if (currentCharge < MaxCharge)
+                {
+                    this.powerComp.powerOutputInt = -(EnergyStandbyConsumption + EnergyChargeConsumption);
+                }
+                else
+                {
+                    this.powerComp.powerOutputInt = -EnergyStandbyConsumption;
+                }
+            }
+            
+            // Lógica de recarga
+            if (currentCharge < MaxCharge)
+            {
+                ticksSinceLastActivation++;
+                if (ticksSinceLastActivation >= RecargaDelayTicks)
+                {
+                    if (this.powerComp != null && this.powerComp.PowerOn)
+                    {
+                        currentCharge++;
+                        ticksSinceLastActivation = 0;
+                    }
+                }
+            }
+        }
+
+        public bool CheckSpring(Pawn p)
+        {
+            bool shouldActivate = false;
+            if (p != null)
+            {
+                if (p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer)))
+                {
+                    shouldActivate = true;
+                }
+            }
+
+            if (shouldActivate)
+            {
+                if (this.powerComp != null && this.powerComp.PowerOn && currentCharge > 0)
+                {
+                    currentCharge--;
+                    ticksSinceLastActivation = 0;
+
+                    // Aplica tu HediffDef para el aturdimiento.
+                    HediffDef hediffDef = DefDatabase<HediffDef>.GetNamed("StunCustom", true);
+                    if (hediffDef != null)
+                    {
+                        Hediff hediff = HediffMaker.MakeHediff(hediffDef, p);
+                        p.health.AddHediff(hediff);
+                    }
+
+                    // Lógica para el daño a Mecanoides, usando tu DamageDef.
+                    if (p.RaceProps.IsMechanoid)
+                    {
+                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", true);
+                        float damageAmount = p.MaxHitPoints * 0.50f;
+                        DamageInfo dinfo = new DamageInfo(myStunDamageDef, damageAmount, 0f, -1f, this);
+                        p.TakeDamage(dinfo);
+                    }
+                    
+                    SoundDefOf.EnergyShield_Reset.PlayOneShot(new TargetInfo(base.Position, base.Map, false));
+                    MoteMaker.MakeStaticMote(base.Position, base.Map, ThingDefOf.TrapSpike);
+                    
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override string GetInspectString()
+        {
+            string baseString = base.GetInspectString();
+            string chargeString = "Carga: " + (currentCharge * 100 / MaxCharge) + "% (" + currentCharge + "/" + MaxCharge + ")";
+            return baseString + "\n" + chargeString;
+        }
+
+        protected override void SpringSub(Pawn p)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+
+//
     public class Building_FloorStunTrap : Building_Trap
     {
         private const int CooldownTicks = 90; // 1.5 segundos
