@@ -1,0 +1,22 @@
+# Changelog for ElectricFencesAndFloors
+
+1.6.0 - Mod updated for 1.6 and passed autotests
+
+
+1.5.0 - Mod updated for 1.5 and passed autotests
+
+
+1.4.2 - All fences should now require electricty research
+
+
+1.4.1 - Mod updated for 1.4 and passed autotests
+
+
+1.0.5.0 - Mod updated for 1.3 and passed autotests
+
+
+1.0.4.0 - Removed the possibility to break down 
+
+
+1.0.3.0 - Added 1.2 support
+
