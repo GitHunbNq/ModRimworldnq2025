@@ -4,7 +4,7 @@
     <defName>FloorRayTrap</defName>
     <label>Energy Floor Trap</label>
     <description>Trampa de Piso con Energía: Actúa como un dispositivo defensivo que inflige daño leve al enemigo, dejándolo inconsciente durante un tiempo prolongado. Esto ofrece al jugador tres opciones tácticas: eliminarlo, capturarlo o dejarlo en libertad. Su uso estratégico permite controlar situaciones sin necesidad de combate directo.</description>
-    <thingClass>SecurityEnergy.Building_FloorRayTrap</thingClass>
+    <thingClass>SecurityEnergy.BuildingTrapSpike</thingClass>
 	<graphicData>
       <texPath>Things/Building/Floor/EnergyFloorTrap</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -29,7 +29,7 @@
       </li>
       <li Class="CompProperties_Power">
         <compClass>CompPowerTrader</compClass>
-        <basePowerConsumption>55</basePowerConsumption> <!-- Matches BasePowerConsumption in C# -->
+        <basePowerConsumption>25</basePowerConsumption> <!-- Matches BasePowerConsumption in C# -->
       </li>
       <li Class="CompProperties_Breakdownable"/>
       <li Class="CompProperties_Stunnable">

@@ -3,7 +3,7 @@
   <DamageDef>
     <defName>StunCustomDamage</defName>
     <label>stun custom Floor</label>
-	<workerClass>SecurityEnergy.Building_FloorStunTrap</workerClass>
+	<workerClass>SecurityEnergy.DamageWorker_Stun</workerClass>
     <isRanged>true</isRanged>
     <makesBlood>false</makesBlood>
     <externalViolence>true</externalViolence>
