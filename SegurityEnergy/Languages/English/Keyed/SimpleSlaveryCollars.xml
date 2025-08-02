@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<LabelWordShackle>shackle</LabelWordShackle>
+	<CommandDescriptionShackle>Mark whether or not {0} is to be shackled. Shackled slaves are unable to move quickly, making them easier to catch but less productive.</CommandDescriptionShackle>
+	<Label_CollarExplosive_Arm>Arm Collar</Label_CollarExplosive_Arm>
+	<Desc_CollarExplosive_Arm>Ready the explosives in the slave collar for detonation.</Desc_CollarExplosive_Arm>
+	<Label_CollarExplosive_Detonate>Detonate</Label_CollarExplosive_Detonate>
+	<Desc_CollarExplosive_Detonate>Detonate the explosives in the collar, instantly killing the wearer.</Desc_CollarExplosive_Detonate>
+	<ReasonArmedExplosiveCollar>Explosive collar was armed to detonate.</ReasonArmedExplosiveCollar>
+	<Label_CollarElectric_Arm>Zap</Label_CollarElectric_Arm>
+	<Desc_CollarElectric_Arm>Electrocutes wearer untill uncouscious.</Desc_CollarElectric_Arm>
+	<LetterIncidentECHeartAttack>{0} is having a heart attack from an electric shock!</LetterIncidentECHeartAttack>
+	<LetterLabelECHeartAttack>Heart Attack</LetterLabelECHeartAttack>
+	<Label_CollarCrypto_Arm>Freeze</Label_CollarCrypto_Arm>
+	<Desc_CollarCrypto_Arm>Freezes wearer in place.</Desc_CollarCrypto_Arm>
+	<TargetSetSlaveCollar>{0} has {1} wear a slave collar.</TargetSetSlaveCollar>
+	<ReasonFailedSetSlaveCollar>{0} is trying to wear a slave collar to {1}.</ReasonFailedSetSlaveCollar>
+	<shacklesDefaultSetting_title>Shackles Default</shacklesDefaultSetting_title>
+	<shacklesDefaultSetting_desc>Choose whether to put the shackles on when you enslave the pawn. Default: On</shacklesDefaultSetting_desc>
+	<slavestageEnableSetting_title>Slave Stage On/Off</slavestageEnableSetting_title>
+	<slavestageEnableSetting_desc>Choose whether to activate the slave's emotional changes. Default: On</slavestageEnableSetting_desc>
+	<rebelcyclechangeEnableSetting_title>Rebellion Cycle Change On/Off</rebelcyclechangeEnableSetting_title>
+	<rebelcyclechangeEnableSetting_desc>Choose whether to enable Rebellion Cycle Change by Slave Stage. If the slave stage is off, it has no effect. Default: On</rebelcyclechangeEnableSetting_desc>
+	<removeworkspeeddebuffEnableSetting_title>Remove Global Work Speed Debuff On/Off</removeworkspeeddebuffEnableSetting_title>
+	<removeworkspeeddebuffEnableSetting_desc>Choose whether to Remove Global Work Speed Debuff by Slave Stage. If the slave stage or reduce rebellion cycle is off, it has no effect. Default: On</removeworkspeeddebuffEnableSetting_desc>
+	<assignslaveEnableSetting_title>Assign Slave On/Off</assignslaveEnableSetting_title>
+	<assignslaveEnableSetting_desc>Choose whether to allow slaves to be assigned to roles. If the slave stage or reduce rebellion cycle is off, it has no effect. Default: On</assignslaveEnableSetting_desc>
+	<stage5SlaveWorkUnlockEnableSetting_title>Unlock Work Restrictions for Stage 5 Slaves On/Off</stage5SlaveWorkUnlockEnableSetting_title>
+	<stage5SlaveWorkUnlockEnableSetting_desc>Allows stage 5 slaves to perform all work types without restrictions, just like colonists. If Slave Stage or Reduce Rebellion Cycle is off, this option has no effect. Default: On</stage5SlaveWorkUnlockEnableSetting_desc>
+	<assimilationslaveEnableSetting_title>Assimilation Slave On/Off</assimilationslaveEnableSetting_title>
+	<assimilationslaveEnableSetting_desc>Choose whether to allow the slave's home faction to be changed to the player's faction when the slave stage reaches level 5. If you release the slave who has become the player's faction, the slave will join the settlement. If the slave stage is off, it has no effect. Default: On</assimilationslaveEnableSetting_desc>
+	<remoteOnlyOnConsoleEnableSetting_title>Activate Collars Only at Comms Console On/Off</remoteOnlyOnConsoleEnableSetting_title>
+	<remoteOnlyOnConsoleEnableSetting_desc>Choose whether the remote activation button for slave collars can only be operated from the Comms Console, and not directly by the slaves. When remote activation is attempted, a colonist must go to the Comms Console to activate it manually. Default: On</remoteOnlyOnConsoleEnableSetting_desc>
+	<slavestage1Period_title>Slave Stage 1 Period</slavestage1Period_title>
+	<slavestage1Period_desc>Sets the slave stage 1 period. Default: 15 days</slavestage1Period_desc>
+	<slavestage2Period_title>Slave Stage 2 Period</slavestage2Period_title>
+	<slavestage2Period_desc>Sets the slave stage 2 period. Default: 15 days</slavestage2Period_desc>
+	<slavestage3Period_title>Slave Stage 3 Period</slavestage3Period_title>
+	<slavestage3Period_desc>Sets the slave stage 3 period. Default: 15 days</slavestage3Period_desc>
+	<slavestage4Period_title>Slave Stage 4 Period</slavestage4Period_title>
+	<slavestage4Period_desc>Sets the slave stage 4 period. Default: 15 days</slavestage4Period_desc>
+	<resetAllSetting_title>Reset All Setting</resetAllSetting_title>
+	<SuppressionSlavestageFactor>Slave Stage</SuppressionSlavestageFactor>
+	<RoleRequirementLabelNotSlave>Must not be slave</RoleRequirementLabelNotSlave>
+	<RoleRequirementLabelSlaveStage>Must be at least slave stage 5</RoleRequirementLabelSlaveStage>
+	<Label_CollarExplosive_Arm_Remote>Arm Collar</Label_CollarExplosive_Arm_Remote>
+	<Desc_CollarExplosive_Arm_Remote>Ready the explosives in the slave collar for detonation.</Desc_CollarExplosive_Arm_Remote>
+	<Label_CollarExplosive_Detonate_Remote>Detonate</Label_CollarExplosive_Detonate_Remote>
+	<Desc_CollarExplosive_Detonate_Remote>Detonate the explosives in the collar, instantly killing the wearer.</Desc_CollarExplosive_Detonate_Remote>
+	<Label_CollarElectric_Arm_Remote>Zap</Label_CollarElectric_Arm_Remote>
+	<Desc_CollarElectric_Arm_Remote>Electrocutes wearer untill uncouscious.</Desc_CollarElectric_Arm_Remote>
+	<Label_CollarCrypto_Arm_Remote>Freeze</Label_CollarCrypto_Arm_Remote>
+	<Desc_CollarCrypto_Arm_Remote>Freezes wearer in place.</Desc_CollarCrypto_Arm_Remote>
+	<Label_CollarExplosive_Arm_Console>Arm Collar (Select)</Label_CollarExplosive_Arm_Console>
+	<Desc_CollarExplosive_Arm_Console>Select pawns wearing explosive collars to arm them for detonation.</Desc_CollarExplosive_Arm_Console>
+	<Label_CollarExplosive_Disarm_Console>Disarm Collar (Select)</Label_CollarExplosive_Disarm_Console>
+	<Desc_CollarExplosive_Disarm_Console>Select pawns wearing explosive collars to disarm them.</Desc_CollarExplosive_Disarm_Console>
+	<Label_CollarExplosive_Detonate_Console>Detonate (Select)</Label_CollarExplosive_Detonate_Console>
+	<Desc_CollarExplosive_Detonate_Console>Select armed explosive collar wearers to detonate their collars.</Desc_CollarExplosive_Detonate_Console>
+	<Label_CollarElectric_Arm_Console>Zap (Select)</Label_CollarElectric_Arm_Console>
+	<Desc_CollarElectric_Arm_Console>Select pawns wearing shock collars to zap them into unconsciousness.</Desc_CollarElectric_Arm_Console>
+	<Label_CollarElectric_Disarm_Console>Disarm Shock Collar (Select)</Label_CollarElectric_Disarm_Console>
+	<Desc_CollarElectric_Disarm_Console>Select pawns wearing shock collars to disarm them.</Desc_CollarElectric_Disarm_Console>
+	<Label_CollarCrypto_Arm_Console>Freeze (Select)</Label_CollarCrypto_Arm_Console>
+	<Desc_CollarCrypto_Arm_Console>Select pawns wearing cryo collars to freeze them in place.</Desc_CollarCrypto_Arm_Console>
+	<Label_CollarCrypto_Disarm_Console>Disarm Cryo Collar (Select)</Label_CollarCrypto_Disarm_Console>
+	<Desc_CollarCrypto_Disarm_Console>Select pawns wearing cryo collars to disarm them.</Desc_CollarCrypto_Disarm_Console>
+	<MessageAssimilationSlave>[PAWN_nameDef] is assimilated into the settlement and considers the settlement [PAWN_possessive] home.</MessageAssimilationSlave>
+	<SimpleSlaveryCollars_NoAssignableRole>No assignable roles are available for this slave.</SimpleSlaveryCollars_NoAssignableRole>
+	<RemoteCollar_Group_All>All pawns</RemoteCollar_Group_All>
+	<RemoteCollar_Group_Slaves>Slaves</RemoteCollar_Group_Slaves>
+	<RemoteCollar_Group_Prisoners>Prisoners</RemoteCollar_Group_Prisoners>
+	<RemoteCollar_Group_Colonists>Colonists</RemoteCollar_Group_Colonists>
+	<RemoteCollar_Group_SlavesAndPrisoners>Slaves + prisoners</RemoteCollar_Group_SlavesAndPrisoners>
+	<RemoteCollar_ExecuteForGroup>Execute on all selected group members</RemoteCollar_ExecuteForGroup>
+	<RemoteCollar_CancelAllReservations>Cancel all reservations for selected group</RemoteCollar_CancelAllReservations>
+	<RemoteCollar_NoEligiblePawn>There are no eligible pawns in the selected group for this operation.</RemoteCollar_NoEligiblePawn>
+	<CollarState_Armed>Status: Armed</CollarState_Armed>
+	<CollarState_Unarmed>Status: Unarmed</CollarState_Unarmed>
+	<Desc_CollarRemoteOnly>This command can only be used from the console.</Desc_CollarRemoteOnly>
+	<Reason_CollarRemoteOnly>Can only be operated from the console.</Reason_CollarRemoteOnly>
+	<RemoteCollar_ReservedJob>{1} operation has been scheduled for {0}. (Cannot operate on their own collar.)</RemoteCollar_ReservedJob>
+	<RemoteCollar_GroupReserved>{1} operation(s) have been scheduled for {0} pawn(s).</RemoteCollar_GroupReserved>
+	<RemoteCollar_AlreadyReserved>This operation has already been scheduled.</RemoteCollar_AlreadyReserved>
+	<RemoteCollar_AlreadyReservedShort>(Scheduled)</RemoteCollar_AlreadyReservedShort>
+	<RemoteCollar_AllReservationsCancelled>All scheduled {1} operation(s) for {0} pawn(s) have been cancelled.</RemoteCollar_AllReservationsCancelled>
+	<RemoteCollarAction_ArmExplosive>Install explosive collar</RemoteCollarAction_ArmExplosive>
+	<RemoteCollarAction_DisarmExplosive>Remove explosive collar</RemoteCollarAction_DisarmExplosive>
+	<RemoteCollarAction_DetonateExplosive>Activate explosive collar</RemoteCollarAction_DetonateExplosive>
+	<RemoteCollarAction_ArmElectric>Install electric collar</RemoteCollarAction_ArmElectric>
+	<RemoteCollarAction_DisarmElectric>Remove electric collar</RemoteCollarAction_DisarmElectric>
+	<RemoteCollarAction_ArmCrypto>Install crypto collar</RemoteCollarAction_ArmCrypto>
+	<RemoteCollarAction_DisarmCrypto>Remove crypto collar</RemoteCollarAction_DisarmCrypto>
+</LanguageData>

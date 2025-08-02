@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!--=============== Wall Stun Panel ===============-->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Turret_WallStunPanel</defName>
+    <label>Wall Stun Panel</label>
+    <description>Panel de Aturdimiento para Pared: Dispositivo defensivo que inflige daño mínimo y produce efectos de aturdimiento en el objetivo. Si un enemigo recibe múltiples impactos consecutivos, estos pueden ser letales. Especialmente diseñado para la contención de prisioneros.</description>
+    <!-- <thingClass>SecurityEnergy.Building_WallStunPanel</thingClass> -->
+	<thingClass>Building_TurretGun</thingClass>	<!-- Correct class reference -->
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <graphicData>
+      <texPath>Things/Building/Security/WallStunPanelGun</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawOffsetNorth>(0,0,0.9)</drawOffsetNorth>
+      <drawOffsetSouth>(0,0,-0.9)</drawOffsetSouth>
+      <drawOffsetWest>(-0.9,0,0)</drawOffsetWest>
+      <drawOffsetEast>(0.9,0,0)</drawOffsetEast>
+    </graphicData>
+    <uiIconPath>Things/Building/Security/WallStunPanel_UI</uiIconPath>
+    <uiIconScale>1.0</uiIconScale>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <altitudeLayer>Building</altitudeLayer>
+    <stealable>false</stealable>
+    <rotatable>true</rotatable>
+    <thingCategories>
+      <li>BuildingsSecurity</li>
+    </thingCategories>
+    <statBases>
+      <MaxHitPoints>1800</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <WorkToBuild>1000</WorkToBuild>
+      <Mass>50</Mass>
+      <ShootingAccuracyTurret>0.97</ShootingAccuracyTurret>
+    </statBases>
+    <tickerType>Normal</tickerType>
+    <comps>
+      <li>
+        <compClass>CompColorable</compClass>
+      </li>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>15</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Stunnable">
+        <affectedDamageDefs>
+<!--           <li>StunCustom</li>  --><!-- Matches custom damage def -->
+          <li>Stun</li>
+          <li>EMP</li>
+        </affectedDamageDefs>
+        <useLargeEMPEffecter>true</useLargeEMPEffecter>
+        <empChancePerTick>0.03</empChancePerTick>
+      </li>
+    </comps>
+    <passability>PassThroughOnly</passability>
+    <pathCost>0</pathCost>
+    <fillPercent>0.3</fillPercent>
+    <hasTooltip>true</hasTooltip>
+    <costList>
+      <Steel>100</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <costStuffCount>20</costStuffCount>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <designationCategory>Security</designationCategory>
+    <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+    <building>
+      <combatPower>15</combatPower>
+      <ai_combatDangerous>true</ai_combatDangerous>
+      <turretGunDef>Gun_Turret_WallStunPanel</turretGunDef>
+      <turretBurstCooldownTime>3</turretBurstCooldownTime>
+      <paintable>true</paintable>
+      <turretTopDrawSize>0.95</turretTopDrawSize>
+    </building>
+    <placeWorkers>
+      <li>PlaceWorker_TurretTop</li>
+      <li>PlaceWorker_ShowTurretRadius</li>
+    </placeWorkers>
+    <designationHotKey>Misc2</designationHotKey>
+  </ThingDef>
+
+  <!--=============== Bullet for Wall Stun Panel ===============-->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Bullet_Turret_WallStunPanel</defName>
+    <label>Munición Wall Stun Panel</label>
+    <thingClass>Beam</thingClass>
+    <graphicData>
+      <texPath>Things/Projectile/ChargeLanceShot</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>StunCustomDamageWall</damageDef> <!-- Single damage def, aligned with C# -->
+      <damageAmountBase>1</damageAmountBase>
+      <speed>8</speed>
+      <beamMoteDef>Mote_BeamRepeaterLaser</beamMoteDef>
+      <beamStartOffset>0.5</beamStartOffset>
+      <armorPenetrationBase>0</armorPenetrationBase>
+    </projectile>
+  </ThingDef>
+
+  <!--=============== Gun for Wall Stun Panel ===============-->
+  <ThingDef ParentName="BaseWeaponTurret">
+    <defName>Gun_Turret_WallStunPanel</defName>
+    <label>Wall Stun Panel</label>
+    <description>Panel de Aturdimiento para Pared: Dispositivo defensivo que inflige daño mínimo y produce efectos de aturdimiento en el objetivo. Si un enemigo recibe múltiples impactos consecutivos, estos pueden ser letales. Especialmente diseñado para la contención de prisioneros.</description>
+    <graphicData>
+      <texPath>Things/Building/Security/WallStunPanel</texPath>
+      <drawSize>(0.8,0.8)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <AccuracyTouch>0.95</AccuracyTouch>
+      <AccuracyShort>0.82</AccuracyShort>
+      <AccuracyMedium>0.85</AccuracyMedium>
+      <AccuracyLong>0.65</AccuracyLong>
+      <RangedWeapon_Cooldown>3</RangedWeapon_Cooldown>
+      <DeteriorationRate>0</DeteriorationRate>
+      <Mass>50</Mass>
+      <Flammability>0</Flammability>
+    </statBases>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <defaultProjectile>Bullet_Turret_WallStunPanel</defaultProjectile>
+        <warmupTime>0</warmupTime>
+        <range>20.0</range>
+        <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
+        <burstShotCount>3</burstShotCount>
+        <soundCast>Shot_BeamRepeater</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+        <aimingChargeMote>Mote_BeamRepeater_Charge</aimingChargeMote>
+        <aimingChargeMoteOffset>1.07</aimingChargeMoteOffset>
+      </li>
+    </verbs>
+  </ThingDef>
+</Defs>

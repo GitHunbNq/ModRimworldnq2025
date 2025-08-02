@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Defs>
+
+<ThingDef ParentName="ApparelBase">
+    <defName>Pawnsuit</defName>
+    <label>Blue Suit</label>
+    <techLevel>Industrial</techLevel>
+    <description>A nano fiber jumpsuit made for use personnel.</description>
+    <graphicData>
+      <texPath>Things/Apparel/Jumpsuit_Blue/PrisonJumpsuit_Blue</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <Mass>0.6</Mass>
+      <WorkToMake>400</WorkToMake>
+      <MaxHitPoints>420</MaxHitPoints>
+      <MarketValue>65</MarketValue>
+      <ArmorRating_Blunt>0.5</ArmorRating_Blunt>
+      <ArmorRating_Sharp>0.2</ArmorRating_Sharp>
+      <ArmorRating_Heat>0.55</ArmorRating_Heat>
+      <Insulation_Cold>15</Insulation_Cold>
+      <Insulation_Heat>10</Insulation_Heat>
+      <Flammability>0.0</Flammability>
+      <DeteriorationRate>0</DeteriorationRate>
+      <Beauty>4</Beauty>
+      <SellPriceFactor>0.75</SellPriceFactor>
+    </statBases>
+    <equippedStatOffsets>
+      <MoveSpeed>3.0</MoveSpeed>
+      <WorkSpeedGlobal>0.30</WorkSpeedGlobal>
+      <CookSpeed>0.25</CookSpeed>
+      <FoodPoisonChance>-0.250</FoodPoisonChance>
+      <ButcheryFleshSpeed>0.15</ButcheryFleshSpeed>
+      <MedicalSurgerySuccessChance>0.15</MedicalSurgerySuccessChance>
+      <MedicalTendQuality>0.15</MedicalTendQuality>
+      <MedicalTendSpeed>0.50</MedicalTendSpeed>
+      <MedicalOperationSpeed>0.25</MedicalOperationSpeed>
+      <ToxicResistance>1.0</ToxicResistance>
+      <ShootingAccuracyPawn>0.15</ShootingAccuracyPawn>
+      <MeleeDodgeChance>0.25</MeleeDodgeChance>
+      <CarryingCapacity>25</CarryingCapacity>
+	  <MentalBreakThreshold>-0.15</MentalBreakThreshold> 
+    </equippedStatOffsets>
+    <costStuffCount>200</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+    </stuffCategories>
+    <costList>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <thingCategories>
+      <li>Apparel</li>
+    </thingCategories>
+    <generateCommonality>0.1</generateCommonality>
+    <apparel>
+      <tags>
+        <li>Outlander</li>
+        <li>Royal</li>
+        <li>RoyalCombatGear</li>
+        <li>RoyalTier7</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <wornGraphicPath>Things/Apparel/Jumpsuit_Blue/PrisonJumpsuit_Blue</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <bodyPartGroups>
+        <li>Neck</li>
+        <li>Torso</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+        <li>Feet</li>
+        <li>Hands</li>
+      </bodyPartGroups>
+    </apparel>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>6</weight>
+          <only>RGBA(0.2,0.2,0.2,1)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <skillRequirement>
+        <Crafting>3</Crafting> <!-- Requisito de habilidad de artesanía -->
+      </skillRequirement>
+      <researchPrerequisite>ComplexClothing</researchPrerequisite> <!-- Requisito de investigación -->
+      <recipeUsers> <!-- Bancos de trabajo donde se fabrica -->
+        <li>ElectricTailoringBench</li>
+        <li>HandTailoringBench</li>
+      </recipeUsers>
+    </recipeMaker>
+  </ThingDef>
+
+</Defs>

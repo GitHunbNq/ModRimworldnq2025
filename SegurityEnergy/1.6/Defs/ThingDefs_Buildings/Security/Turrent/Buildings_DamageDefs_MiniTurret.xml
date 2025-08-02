@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <DamageDef>
+    <defName>StunCustom</defName>
+    <label>stun custom</label>
+    <workerClass>SecurityEnergy.DamageWorker_Stun</workerClass>  
+    <defaultArmorPenetration>0</defaultArmorPenetration>
+    <defaultStoppingPower>0</defaultStoppingPower>
+	<hediff>Burn</hediff>
+  </DamageDef>
+</Defs>

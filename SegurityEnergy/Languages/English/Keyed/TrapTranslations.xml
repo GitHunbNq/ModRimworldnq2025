@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <FloorRayTrap>Floor Ray Trap</FloorRayTrap>
+  <FloorRayTrap.desc>A hidden floor trap that shoots a non-lethal ray at enemies, immobilizing them.</FloorRayTrap.desc>
+  <Bullet_Ray>Ray Ammo</Bullet_Ray>
+  <Bullet_Ray.desc>Special ammo for the floor ray trap, delivering a stunning jolt.</Bullet_Ray.desc>
+  <Bullet_Ray>Ray Bolt</Bullet_Ray>
+  <RayStun>Ray Stun</RayStun>
+</LanguageData>

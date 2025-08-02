@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <DamageDef>
+    <defName>StunCustomDamage</defName>
+    <label>stun custom Floor</label>
+	<workerClass>SecurityEnergy.Building_FloorStunTrap</workerClass>
+    <isRanged>true</isRanged>
+    <makesBlood>false</makesBlood>
+    <externalViolence>true</externalViolence>
+	<hediff>Burn</hediff>
+ 
+  </DamageDef>
+</Defs>

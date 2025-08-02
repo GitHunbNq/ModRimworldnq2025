@@ -1,0 +1,154 @@
+<Defs>
+
+  <!--=============== Mini-turret ===============-->
+
+		
+  <ThingDef ParentName="BuildingBase">
+    <defName>Turret_MiniSBT</defName>
+    <label>Torreta de Aturdimiento</label>
+    <description>Torreta de Aturdimiento: Dispositivo defensivo que inflige daño mínimo y aturde al objetivo. Si el mismo enemigo recibe múltiples impactos consecutivos, puede resultar letal. Cuando el terreno está mojado, el ataque genera un efecto de dispersión que afecta hasta tres celdas adicionales, dañando a otros enemigos dentro del radio de acción.</description>
+    <thingClass>Building_TurretGun</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <graphicData>
+      <texPath>Things/Building/Security/MiniTurret</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+      <damageData>
+        <rect>(0.2,0.2,0.6,0.6)</rect>
+      </damageData>
+      <shadowData>
+        <volume>(0.0,0.0,0.0)</volume>
+        <offset>(0,0,0)</offset>
+      </shadowData>
+    </graphicData>
+    <uiIconPath>Things/Building/Security/MiniTurretGun_top_UI</uiIconPath>
+    <uiIconScale>1.0</uiIconScale>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <altitudeLayer>Building</altitudeLayer>
+    <stealable>false</stealable>
+    <rotatable>false</rotatable>
+    <thingCategories>
+      <li>BuildingsSecurity</li>
+    </thingCategories>
+    <statBases>
+      <MaxHitPoints>1800</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <WorkToBuild>1000</WorkToBuild>
+      <Mass>50</Mass>
+      <ShootingAccuracyTurret>0.97</ShootingAccuracyTurret>
+    </statBases>
+    <tickerType>Normal</tickerType>
+    <comps>
+			<li>
+				<compClass>CompColorable</compClass>
+			</li>
+      <li Class="CompProperties_Stunnable">
+        <affectedDamageDefs>
+          <li>Stun</li>
+          <li>EMP</li>
+        </affectedDamageDefs>
+      </li>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>15</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Explosive">
+        <wickTicks>240</wickTicks>
+        <explosiveRadius>0</explosiveRadius>
+        <explosiveDamageType>Bomb</explosiveDamageType>
+      </li>
+      <li Class="CompProperties_Stunnable">
+        <useLargeEMPEffecter>true</useLargeEMPEffecter>
+        <empChancePerTick>0.03</empChancePerTick>
+        <affectedDamageDefs>
+          <li>EMP</li>
+        </affectedDamageDefs>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+    </comps>
+    <passability>PassThroughOnly</passability>
+    <pathCost>50</pathCost>
+    <fillPercent>0.4</fillPercent>
+    <hasTooltip>true</hasTooltip>
+		<costList>
+			<Steel>100</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+    <costStuffCount>20</costStuffCount>
+	<terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <designationCategory>Security</designationCategory>
+    <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+    <building>
+      <combatPower>15</combatPower>   <!-- same as a scavenger -->
+      <ai_combatDangerous>true</ai_combatDangerous>
+      <turretGunDef>Gun_Turret_MiniSBT</turretGunDef>
+      <turretBurstCooldownTime>3</turretBurstCooldownTime>
+	  <paintable>true</paintable>
+	  <turretTopDrawSize>0.95</turretTopDrawSize>
+    </building> 
+    <placeWorkers>
+      <li>PlaceWorker_TurretTop</li>
+      <li>PlaceWorker_ShowTurretRadius</li>
+    </placeWorkers>
+    <designationHotKey>Misc2</designationHotKey>
+  </ThingDef>
+
+
+  <ThingDef ParentName="BaseBullet">
+    <defName>Bullet_Turret_MiniSBT</defName>
+    <label>Municion para Torreta de Aturdimiento</label>
+    <thingClass>Beam</thingClass>
+    <graphicData>
+      <texPath>Things/Projectile/ChargeLanceShot</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+	  <explosionRadius>1</explosionRadius>
+      <damageDef>BeamBypassShields</damageDef>
+	  <damageAmountBase>1</damageAmountBase>
+	  <speed>8</speed> 
+      <beamMoteDef>Mote_BeamRepeaterLaser</beamMoteDef>
+	  <damageDef>StunCustom</damageDef>
+      <beamStartOffset>0.5</beamStartOffset>
+	  <armorPenetrationBase>0</armorPenetrationBase>
+    </projectile>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseWeaponTurret">
+    <defName>Gun_Turret_MiniSBT</defName>
+    <label>Torreta de Aturdimiento</label>
+    <description>Torreta de Aturdimiento: Dispositivo defensivo que inflige daño mínimo y aturde al objetivo. Si el mismo enemigo recibe múltiples impactos consecutivos, puede resultar letal. Cuando el terreno está mojado, el ataque genera un efecto de dispersión que afecta hasta tres celdas adicionales, dañando a otros enemigos dentro del radio de acción.</description>
+    <graphicData>
+	<texPath>Things/Building/Security/MiniTurretGun_top</texPath>
+			<drawSize>(0.8,0.8)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <AccuracyTouch>0.95</AccuracyTouch>
+      <AccuracyShort>0.82</AccuracyShort>
+      <AccuracyMedium>0.85</AccuracyMedium>
+      <AccuracyLong>0.65</AccuracyLong>
+      <RangedWeapon_Cooldown>3</RangedWeapon_Cooldown>
+      <DeteriorationRate>0</DeteriorationRate>
+      <Mass>50</Mass>
+      <Flammability>0</Flammability>
+    </statBases>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <defaultProjectile>Bullet_Turret_MiniSBT</defaultProjectile>
+		<warmupTime>0</warmupTime>
+        <range>38.0</range>
+        <ticksBetweenBurstShots>10</ticksBetweenBurstShots>
+		<burstShotCount>3</burstShotCount>
+        <soundCast>Shot_BeamRepeater</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+        <aimingChargeMote>Mote_BeamRepeater_Charge</aimingChargeMote>
+        <aimingChargeMoteOffset>1.07</aimingChargeMoteOffset>
+      </li>
+    </verbs>
+  </ThingDef>
+
+	
+</Defs>
