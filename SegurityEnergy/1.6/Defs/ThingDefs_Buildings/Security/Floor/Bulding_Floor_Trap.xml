@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-  <ThingDef ParentName="BaseTrap">
-    <defName>FloorRayTrap</defName>
-    <label>Energy Floor Trap</label>
-    <description>Trampa de Piso con Energía: Actúa como un dispositivo defensivo que inflige daño leve al enemigo, dejándolo inconsciente durante un tiempo prolongado. Esto ofrece al jugador tres opciones tácticas: eliminarlo, capturarlo o dejarlo en libertad. Su uso estratégico permite controlar situaciones sin necesidad de combate directo.</description>
-    <thingClass>SecurityEnergy.BuildingTrapSpike</thingClass>
-	<graphicData>
-      <texPath>Things/Building/Floor/EnergyFloorTrap</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1,1)</drawSize>
-    </graphicData>
-    <uiIconPath>UI/EnergyFloorTrap_UI</uiIconPath>
-    <statBases>
-      <MaxHitPoints>50</MaxHitPoints>
-      <Beauty>-2</Beauty>
-      <TrapMeleeDamage>1</TrapMeleeDamage> <!-- Minimal damage, as stun is handled by DamageWorker -->
-      <TrapSpringChance>1.0</TrapSpringChance>
-      <WorkToBuild>1800</WorkToBuild>
-    </statBases>
+    <ThingDef ParentName="BaseTrap">
+        <defName>FloorRayTrap</defName>
+        <label>Energy Floor Trap</label>
+        <description>Trampa de Piso con Energía: Actúa como un dispositivo defensivo que inflige daño leve al enemigo, dejándolo inconsciente durante un tiempo prolongado. Esto ofrece al jugador tres opciones tácticas: eliminarlo, capturarlo o dejarlo en libertad. Su uso estratégico permite controlar situaciones sin necesidad de combate directo.</description>
+        <thingClass>SegurityEnergy.Building_FloorStunTrap</thingClass>
+        <graphicData>
+            <texPath>Things/Building/Floor/EnergyFloorTrap</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <drawSize>(1,1)</drawSize>
+        </graphicData>
+        <uiIconPath>UI/EnergyFloorTrap_UI</uiIconPath>
+        <statBases>
+            <MaxHitPoints>50</MaxHitPoints>
+            <Beauty>-2</Beauty>
+            <TrapMeleeDamage>1</TrapMeleeDamage>
+            <TrapSpringChance>1.0</TrapSpringChance>
+            <WorkToBuild>1800</WorkToBuild>
+        </statBases>
+        <building>
+            <isTrap>true</isTrap>
+            <trapDamageCategory>Stun</trapDamageCategory>
+        </building>
+        <comps>
+            <li Class="SegurityEnergy.CompProperties_Rechargeable">
+                <maxCharge>5</maxCharge>
+                <ticksToRechargeOneCharge>180</ticksToRechargeOneCharge> <energyConsumptionWhenCharging>40</energyConsumptionWhenCharging>
+                <energyConsumptionWhenFull>25</energyConsumptionWhenFull>
+            </li>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+            </li>
+            <li Class="CompProperties_Breakdownable"/>
+            <li Class="CompProperties_Stunnable">
+                <affectedDamageDefs>
+                    <li>StunCustomDamage</li>
+                    <li>EMP</li>
+                </affectedDamageDefs>
+                <useLargeEMPEffecter>true</useLargeEMPEffecter>
+                <empChancePerTick>0.03</empChancePerTick>
+            </li>
+        </comps>
+        <category>Building</category>
+        <size>(1,1)</size>
+        <passability>Standable</passability>
+        <fillPercent>0.2</fillPercent>
+        <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+        <designationCategory>Security</designationCategory>
+        <designatorDropdown>SecurityTraps</designatorDropdown>
+        <altitudeLayer>Building</altitudeLayer>
+        <tickerType>Normal</tickerType>
+        <costList>
+            <Steel>25</Steel>
+            <ComponentIndustrial>1</ComponentIndustrial>
+        </costList>
+    </ThingDef>
 
-    <building>
-      <isTrap>true</isTrap>
-      <trapDamageCategory>Stun</trapDamageCategory>
-    </building>
-    <comps>
-      <li>
-        <compClass>CompColorable</compClass>
-      </li>
-      <li Class="CompProperties_Power">
-        <compClass>CompPowerTrader</compClass>
-        <basePowerConsumption>25</basePowerConsumption> <!-- Matches BasePowerConsumption in C# -->
-      </li>
-      <li Class="CompProperties_Breakdownable"/>
-      <li Class="CompProperties_Stunnable">
-        <affectedDamageDefs>
-          <li>StunCustomDamage</li>
-          <li>EMP</li>
-        </affectedDamageDefs>
-        <useLargeEMPEffecter>true</useLargeEMPEffecter>
-        <empChancePerTick>0.03</empChancePerTick>
-      </li>
-    </comps>
-    <category>Building</category>
-    <size>(1,1)</size>
-    <passability>Standable</passability>
-    <fillPercent>0.2</fillPercent>
-    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-    <designationCategory>Security</designationCategory>
-    <designatorDropdown>SecurityTraps</designatorDropdown>
-    <altitudeLayer>Building</altitudeLayer>
-    <tickerType>Normal</tickerType>
-<!--     <researchPrerequisite>EnergyTrapTech</researchPrerequisite> -->
-    <costList>
-      <Steel>25</Steel>
-      <ComponentIndustrial>1</ComponentIndustrial>
-    </costList>
-  </ThingDef>
-
-  <ThingDef Name="BaseTrap" Abstract="True">
-    <category>Building</category>
-    <altitudeLayer>Building</altitudeLayer>
-    <useHitPoints>true</useHitPoints>
-    <selectable>true</selectable>
-    <neverMultiSelect>true</neverMultiSelect>
-    <tickerType>Normal</tickerType>
-  </ThingDef>
+    <ThingDef Name="BaseTrap" Abstract="True">
+        <category>Building</category>
+        <altitudeLayer>Building</altitudeLayer>
+        <useHitPoints>true</useHitPoints>
+        <selectable>true</selectable>
+        <neverMultiSelect>true</neverMultiSelect>
+        <tickerType>Normal</tickerType>
+    </ThingDef>
 </Defs>
