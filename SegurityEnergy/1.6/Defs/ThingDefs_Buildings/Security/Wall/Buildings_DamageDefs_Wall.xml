@@ -3,7 +3,7 @@
   <DamageDef>
     <defName>StunCustomDamageWall</defName>
     <label>stun custom panel</label>
-    <workerClass>SegurityEnergy.DamageWorker_StunEffects</workerClass>  
+    <workerClass>SegurityEnergy.DamageWorkerStun</workerClass>  
     <defaultArmorPenetration>0</defaultArmorPenetration>
     <defaultStoppingPower>0</defaultStoppingPower>
 	<hediff>StunCustomWall</hediff>

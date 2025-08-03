@@ -3,7 +3,7 @@
   <DamageDef>
     <defName>StunCustomDamage</defName>
     <label>energy stun</label>
-    <workerClass>SegurityEnergy.DamageWorker_StunEffects</workerClass>
+    <workerClass>SegurityEnergy.DamageWorkerStun</workerClass>
     <isRanged>false</isRanged>
     <makesBlood>false</makesBlood>
     <externalViolence>true</externalViolence>

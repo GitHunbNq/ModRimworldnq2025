@@ -14,7 +14,7 @@
         <statBases>
             <MaxHitPoints>50</MaxHitPoints>
             <Beauty>-2</Beauty>
-            <TrapMeleeDamage>1</TrapMeleeDamage>
+            <TrapMeleeDamage>300</TrapMeleeDamage>
             <TrapSpringChance>1.0</TrapSpringChance>
             <WorkToBuild>1800</WorkToBuild>
         </statBases>
@@ -60,6 +60,6 @@
         <fillPercent>0.2</fillPercent>
         <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
         <designationCategory>Security</designationCategory>
-        <designatorDropdown>SecurityTraps</designatorDropdown>
+<!--         <designatorDropdown>SecurityTraps</designatorDropdown> -->
     </ThingDef>
 </Defs>

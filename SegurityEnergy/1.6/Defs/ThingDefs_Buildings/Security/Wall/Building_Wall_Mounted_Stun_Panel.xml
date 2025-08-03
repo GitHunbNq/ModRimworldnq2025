@@ -61,6 +61,9 @@
       <ComponentIndustrial>1</ComponentIndustrial>
     </costList>
     <costStuffCount>20</costStuffCount>
+       <stuffCategories>
+	     <li>Metallic</li> <!-- Puedes ajustar esto según lo que quieras permitir -->
+	   </stuffCategories>
     <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
     <designationCategory>Security</designationCategory>
     <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
