@@ -360,7 +360,7 @@ namespace SegurityEnergy
                         DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", false);
                         if (myStunDamageDef != null)
                         {
-                            DamageInfo dinfo = new DamageInfo(myStunDamageDef, 1f, 0f, -1f, this);
+                            DamageInfo dinfo = new(myStunDamageDef, 1f, 0f, -1f, this);
                             p.TakeDamage(dinfo);
                             Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} stunned {p.Name}");
                         }
