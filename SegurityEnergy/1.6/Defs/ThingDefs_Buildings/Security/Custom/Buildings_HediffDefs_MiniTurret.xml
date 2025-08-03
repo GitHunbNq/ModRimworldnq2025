@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-    
     <DamageDef>
         <defName>StunCustomDamage</defName>
         <label>Energy Stun</label>
@@ -16,18 +15,5 @@
         <description>Este individuo ha sido aturdido por una descarga de energía y permanecerá inconsciente por un tiempo.</description>
         <hediffClass>Hediff_Stun</hediffClass>
         <tendable>false</tendable>
-        <is</div><summary>The user wants a complete, ready-to-use XML file for their RimWorld turret, including the `DamageDef` and `HediffDef` that were previously discussed. They need this to continue working on their mod.
-
-Here's the plan to provide a comprehensive solution:
-1.  Acknowledge the user's request and the need for a complete, working example.
-2.  Provide a single, complete XML block that can be used to replace the contents of their `Buildings_HediffDefs_MiniTurret.xml` file.
-3.  The XML must contain the `DamageDef` and `HediffDef` as previously defined.
-4.  The `ThingDef` for the turret (`RayTurret`) must be configured correctly:
-    * `thingClass`: `SegurityEnergy.Building_RayTurret`.
-    * `comps`: It must include the `CompProperties_Rechargeable` with appropriate values for a turret (e.g., `maxCharge` of 10, faster `ticksToRechargeOneCharge`).
-    * `comps`: It must also include `CompProperties_Power` without a `basePowerConsumption` value, as the new component handles power.
-    * `comps`: It should also include a `CompProperties_Mannable` component.
-5.  Include a brief explanation of how to use this XML and the `CompRechargeable` component. This will reinforce the design and help the user understand the changes.
-
-This approach ensures the user has a complete, functional file and understands how the different parts of their mod now interact, allowing them to move forward with confidence.
-</summary>
+        <is</div></summary>
+</response>

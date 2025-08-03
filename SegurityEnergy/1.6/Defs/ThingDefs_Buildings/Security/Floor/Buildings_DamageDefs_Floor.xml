@@ -3,8 +3,8 @@
   <DamageDef>
     <defName>StunCustomDamage</defName>
     <label>energy stun</label>
-    <workerClass>SegurityEnergy.DamageWorker_Stun</workerClass>
-    <isRanged>false</isRanged> <!-- Direct damage for traps -->
+    <workerClass>SegurityEnergy.DamageWorker_StunEffects</workerClass>
+    <isRanged>false</isRanged>
     <makesBlood>false</makesBlood>
     <externalViolence>true</externalViolence>
     <hediff>StunCustom</hediff>
