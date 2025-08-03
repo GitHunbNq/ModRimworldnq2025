@@ -32,7 +32,7 @@ namespace SegurityEnergy
                     if (this.Props.useLargeEMPEffecter)
                     {
                         // Versión corregida para la API 1.6
-                        GenExplosion.DoExplosion(this.parent.Position, this.parent.Map, 5f, DamageDefOf.EMP, null, -1, -1f, null, null, null, 0f, 1, 0f, 1, false, null, 0f, GasType.BlindSmoke);
+                        GenExplosion.DoExplosion(this.parent.Position, this.parent.Map, 5f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, null, null, 0, false);
                     }
                     else
                     {
