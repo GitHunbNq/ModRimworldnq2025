@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace SegurityEnergy
 {
-    // --- CLASES ORIGINALES DEL MOD ---
     public class CompProperties_Stunnable : CompProperties
     {
         public List<DamageDef> affectedDamageDefs;
@@ -30,9 +29,10 @@ namespace SegurityEnergy
                 this.empTicks--;
                 if (this.empTicks == 0)
                 {
+                    // La firma de GenExplosion.DoExplosion se ha actualizado para 1.6
                     if (this.Props.useLargeEMPEffecter)
                     {
-                        GenExplosion.DoExplosion(this.parent.Position, this.parent.Map, 5f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1);
+                        GenExplosion.DoExplosion(this.parent.Position, this.parent.Map, 5f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, GasType.BlindSmoke);
                     }
                     else
                     {
@@ -123,14 +123,12 @@ namespace SegurityEnergy
         }
     }
 
-    // --- NUEVO COMPONENTE DE CARGA ---
     public class CompProperties_Rechargeable : CompProperties
     {
         public int maxCharge = 5;
         public int ticksToRechargeOneCharge = 180;
         public float energyConsumptionWhenCharging = 40f;
         public float energyConsumptionWhenFull = 25f;
-
         public CompProperties_Rechargeable()
         {
             this.compClass = typeof(CompRechargeable);
@@ -143,10 +141,8 @@ namespace SegurityEnergy
         private CompPowerTrader powerComp;
         private int currentCharge = 0;
         private int ticksSinceLastUse = 0;
-
         public int CurrentCharge => currentCharge;
         public int MaxCharge => Props.maxCharge;
-
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
@@ -161,11 +157,11 @@ namespace SegurityEnergy
             {
                 if (currentCharge < MaxCharge)
                 {
-                    this.powerComp.powerOutput = -Props.energyConsumptionWhenCharging;
+                    this.powerComp.PowerOutput = -Props.energyConsumptionWhenCharging;
                 }
                 else
                 {
-                    this.powerComp.powerOutput = -Props.energyConsumptionWhenFull;
+                    this.powerComp.PowerOutput = -Props.energyConsumptionWhenFull;
                 }
             }
 
@@ -179,6 +175,13 @@ namespace SegurityEnergy
                 }
             }
         }
+        
+        public override void PostExposeData()
+        {
+            base.PostExposeData();
+            Scribe_Values.Look(ref currentCharge, "currentCharge", 0);
+            Scribe_Values.Look(ref ticksSinceLastUse, "ticksSinceLastUse", 0);
+        }
 
         public bool TryUseCharge()
         {
@@ -190,47 +193,31 @@ namespace SegurityEnergy
             }
             return false;
         }
-
         public override string CompInspectStringExtra()
         {
             return "Carga: " + (currentCharge * 100 / MaxCharge) + "% (" + currentCharge + "/" + MaxCharge + ")";
         }
     }
 
-    // --- CLASE DE TRAMPA DE PISO REFACTORIZADA PARA USAR EL COMPONENTE ---
     public class Building_FloorStunTrap : Building_Trap
     {
         private CompRechargeable rechargeableComp;
         private const float AoERadius = 2f;
-
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
             this.rechargeableComp = this.GetComp<CompRechargeable>();
         }
 
-        public override bool CheckSpring(Pawn p)
+        // Se usa SpringSub en lugar de CheckSpring en RimWorld 1.6
+        protected override void SpringSub(Pawn p)
         {
-            bool shouldActivate = false;
-            if (p != null)
+            if (rechargeableComp != null && rechargeableComp.TryUseCharge())
             {
-                if (p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer)))
-                {
-                    shouldActivate = true;
-                }
+                ApplyAreaEffect();
+                // Si el sonido no existe, crea un SoundDef en tu XML o usa uno predeterminado
+                SoundDefOf.TrapSpike_Activate.PlayOneShot(new TargetInfo(base.Position, base.Map, false));
             }
-
-            if (shouldActivate)
-            {
-                // Ahora usamos el componente para verificar y usar la carga.
-                if (rechargeableComp != null && rechargeableComp.TryUseCharge())
-                {
-                    ApplyAreaEffect();
-                    SoundDefOf.TrapSpike_Activate.PlayOneShot(new TargetInfo(base.Position, base.Map, false));
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void ApplyAreaEffect()
@@ -252,7 +239,6 @@ namespace SegurityEnergy
         }
     }
 
-    // --- EJEMPLO DE CÓMO LA TORRETA USARÍA EL COMPONENTE ---
     public class Building_RayTurret : Building_TurretGun
     {
         private CompRechargeable rechargeableComp;
@@ -262,23 +248,18 @@ namespace SegurityEnergy
             this.rechargeableComp = this.GetComp<CompRechargeable>();
         }
 
-        public override bool CanSetFor
+        public override void Tick()
         {
-            get
+            base.Tick();
+            // Lógica de disparo y gasto de carga
+            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 && 
+                this.Targeter.Target != null && this.Targeter.Target.IsValid)
             {
-                // La torreta solo puede disparar si tiene carga.
-                return rechargeableComp != null && rechargeableComp.CurrentCharge > 0;
+                if (this.gun.TryStartShootInManualCastMode(this.Targeter.Target, true))
+                {
+                    this.rechargeableComp.TryUseCharge();
+                }
             }
-        }
-
-        public override void BurstStart()
-        {
-            // Usa una carga al empezar el disparo.
-            if (rechargeableComp != null)
-            {
-                rechargeableComp.TryUseCharge();
-            }
-            base.BurstStart();
         }
     }
 }
