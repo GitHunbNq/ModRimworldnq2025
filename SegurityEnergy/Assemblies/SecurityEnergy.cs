@@ -4,7 +4,6 @@ using Verse;
 using Verse.AI;
 using Verse.Sound;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SegurityEnergy
 {
@@ -49,7 +48,7 @@ namespace SegurityEnergy
                             propagationSpeed: 0.6f,
                             excludeRadius: 0f,
                             affectedAngle: null,
-                            doSoundEffects: true
+                            doSound: true
                         );
                     }
                     else
@@ -78,75 +77,51 @@ namespace SegurityEnergy
     public class DamageWorker_Stun : DamageWorker
     {
         private const float WetGroundRadius = 3f;
+
         public override DamageResult Apply(DamageInfo dinfo, Thing victim)
         {
             DamageResult result = new DamageResult();
-            if (victim is Pawn pawn && !pawn.Dead && !pawn.Downed)
+            Pawn pawn = victim as Pawn;
+            if (pawn != null && !pawn.Dead && !pawn.Downed)
             {
                 Map map = pawn.Map;
                 bool isWetGround = IsGroundWet(pawn.Position, map);
-                bool isTrap = dinfo.Instigator is Building_FloorStunTrap || dinfo.Instigator is Building_FloorRayTrap;
-                if (isWetGround && !isTrap)
+                bool isTrap = dinfo.Instigator is Building || dinfo.Instigator?.def.defName.Contains("Trap") == true;
+                bool isTurret = dinfo.Instigator is Building_Turret || dinfo.Instigator?.def.defName.Contains("Turret") == true;
+                if (isWetGround && !isTrap && !isTurret)
                 {
                     FleckMaker.Static(pawn.Position, map, FleckDefOf.ShotFlash, 10f);
                     foreach (Thing thing in GenRadial.RadialDistinctThingsAround(pawn.Position, map, WetGroundRadius, true))
                     {
-                        if (thing is Pawn nearbyPawn && !nearbyPawn.Dead && !nearbyPawn.Downed)
+                        Pawn nearbyPawn = thing as Pawn;
+                        if (nearbyPawn != null && !nearbyPawn.Dead && !nearbyPawn.Downed)
                         {
-                            ApplyStunEffects(nearbyPawn, dinfo);
+                            ApplyStunEffects(nearbyPawn, dinfo.Instigator);
                             result.hitThing = nearbyPawn;
                         }
                     }
                 }
                 else
                 {
-                    ApplyStunEffects(pawn, dinfo);
+                    ApplyStunEffects(pawn, dinfo.Instigator);
                     result.hitThing = pawn;
                 }
             }
             return result;
         }
 
-        private void ApplyStunEffects(Pawn pawn, DamageInfo dinfo)
+        public static void ApplyStunEffects(Pawn pawn, Thing instigator)
         {
-            bool isTrap = dinfo.Instigator is Building_FloorStunTrap || dinfo.Instigator is Building_FloorRayTrap;
-            bool isTurret = dinfo.Instigator is Building_RayTurret;
+            bool isTrap = instigator is Building || instigator?.def.defName.Contains("Trap") == true;
+            bool isTurret = instigator is Building_Turret || instigator?.def.defName.Contains("Turret") == true;
             Log.Message($"[SegurityEnergy] Applying StunCustom to {pawn.Name} via {(isTrap ? "Trap" : isTurret ? "Turret" : "Unknown")}");
-            Hediff stunHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("StunCustom", false), pawn);
-            if (stunHediff != null)
-            {
-                stunHediff.Severity = 1f;
-                pawn.health.AddHediff(stunHediff, null, dinfo);
-            }
-            else
-            {
-                Log.Error($"[SegurityEnergy] StunCustom hediff not found in DefDatabase.");
-            }
+            Hediff stunHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("StunCustom", true), pawn);
+            stunHediff.Severity = 1f;
+            pawn.health.AddHediff(stunHediff);
             if (pawn.Map != null)
             {
-                if (isTrap || isTurret)
-                {
-                    MoteMaker.MakeStaticMote(pawn.Position, pawn.Map, ThingDef.Named("Mote_BeamRepeaterLaser"), 1f);
-                }
-                else
-                {
-                    FleckMaker.Static(pawn.Position, pawn.Map, FleckDefOf.ShotFlash, 10f);
-                }
-            }
-            if (!isTrap && !isTurret)
-            {
-                float maxHealth = pawn.health.capacities.GetLevel(PawnCapacityDefOf.Consciousness) * 100f;
-                float damageAmount = maxHealth * 0.2f;
-                DamageInfo stunDinfo = new DamageInfo(DamageDefOf.Blunt, damageAmount, 0f, -1f, dinfo.Instigator);
-                pawn.TakeDamage(stunDinfo);
-                DamageInfo cutDinfo = new DamageInfo(DamageDefOf.Cut, 2f, 0f, -1f, dinfo.Instigator, pawn.RaceProps.body.corePart);
-                pawn.TakeDamage(cutDinfo);
-                Hediff burnHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Burn", false), pawn, pawn.RaceProps.body.corePart);
-                if (burnHediff != null)
-                {
-                    burnHediff.Severity = 0.1f;
-                    pawn.health.AddHediff(burnHediff);
-                }
+                ThingDef moteDef = DefDatabase<ThingDef>.GetNamed("Mote_BeamRepeaterLaser", false) ?? ThingDefOf.Mote_DustPuff;
+                MoteMaker.MakeStaticMote(pawn.Position, pawn.Map, moteDef, 1f);
             }
             pawn.health.capacities.Notify_CapacityLevelsDirty();
         }
@@ -154,7 +129,7 @@ namespace SegurityEnergy
         private bool IsGroundWet(IntVec3 position, Map map)
         {
             if (map == null) return false;
-            if (map.weatherManager.RainRate > 0) return true;
+            if (map.weatherManager.RainRate > 0f) return true;
             TerrainDef terrain = map.terrainGrid.TerrainAt(position);
             return terrain != null && (terrain == TerrainDefOf.WaterShallow || terrain == TerrainDefOf.WaterDeep || terrain.defName.Contains("Water"));
         }
@@ -279,7 +254,7 @@ namespace SegurityEnergy
             if (p == null || p.Dead || !p.HostileTo(this.Faction) || rechargeableComp == null || !rechargeableComp.TryUseCharge())
             {
                 Log.Message($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} failed to activate: " +
-                            $"Pawn: {p?.Name.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
+                            $"Pawn: {p?.Name?.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
                             $"Charge: {rechargeableComp?.CurrentCharge ?? 0}");
                 return;
             }
@@ -297,17 +272,8 @@ namespace SegurityEnergy
                     bool isTarget = p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer));
                     if (isTarget)
                     {
-                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", false);
-                        if (myStunDamageDef != null)
-                        {
-                            DamageInfo dinfo = new DamageInfo(myStunDamageDef, 1f, 0f, -1f, this);
-                            p.TakeDamage(dinfo);
-                            Log.Message($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} stunned {p.Name}");
-                        }
-                        else
-                        {
-                            Log.Error($"[SegurityEnergy] StunCustomDamage not found in DefDatabase.");
-                        }
+                        DamageWorker_Stun.ApplyStunEffects(p, this);
+                        Log.Message($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} stunned {p.Name}");
                     }
                 }
             }
@@ -339,7 +305,7 @@ namespace SegurityEnergy
             if (p == null || p.Dead || !p.HostileTo(this.Faction) || rechargeableComp == null || !rechargeableComp.TryUseCharge())
             {
                 Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} failed to activate: " +
-                            $"Pawn: {p?.Name.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
+                            $"Pawn: {p?.Name?.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
                             $"Charge: {rechargeableComp?.CurrentCharge ?? 0}");
                 return;
             }
@@ -357,17 +323,8 @@ namespace SegurityEnergy
                     bool isTarget = p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer));
                     if (isTarget)
                     {
-                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", false);
-                        if (myStunDamageDef != null)
-                        {
-                            DamageInfo dinfo = new(myStunDamageDef, 1f, 0f, -1f, this);
-                            p.TakeDamage(dinfo);
-                            Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} stunned {p.Name}");
-                        }
-                        else
-                        {
-                            Log.Error($"[SegurityEnergy] StunCustomDamage not found in DefDatabase.");
-                        }
+                        DamageWorker_Stun.ApplyStunEffects(p, this);
+                        Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} stunned {p.Name}");
                     }
                 }
             }
@@ -399,15 +356,29 @@ namespace SegurityEnergy
             if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 && this.AttackVerb != null &&
                 this.CurrentTarget != null && this.CurrentTarget.IsValid)
             {
-                if (this.AttackVerb.TryStartCastOn(this.CurrentTarget, surpriseAttack: false, canHitNonTargetPawns: true, preventFriendlyFire: false))
+                Verb attackVerb = this.AttackVerb;
+                if (attackVerb != null && attackVerb.verbProps != null)
                 {
-                    this.rechargeableComp.TryUseCharge();
-                    Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} fired at {this.CurrentTarget.Thing?.Label ?? "null"}");
+                    LocalTargetInfo target = this.CurrentTarget;
+                    if (target.Thing is Pawn p && !p.Dead && !p.Downed)
+                    {
+                        bool isTarget = p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer));
+                        if (isTarget && attackVerb.TryStartCastOn(target, false, true, false))
+                        {
+                            this.rechargeableComp.TryUseCharge();
+                            DamageWorker_Stun.ApplyStunEffects(p, this);
+                            Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} stunned {p.Name}");
+                        }
+                        else
+                        {
+                            Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} failed to fire: " +
+                                        $"Verb: {attackVerb != null}, Target: {target.Thing?.Label ?? "null"}");
+                        }
+                    }
                 }
                 else
                 {
-                    Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} failed to fire: " +
-                                $"Verb: {this.AttackVerb != null}, Target: {this.CurrentTarget.Thing?.Label ?? "null"}");
+                    Log.Error($"[SegurityEnergy] Building_RayTurret at {this.Position} has null AttackVerb or verbProps.");
                 }
             }
         }
