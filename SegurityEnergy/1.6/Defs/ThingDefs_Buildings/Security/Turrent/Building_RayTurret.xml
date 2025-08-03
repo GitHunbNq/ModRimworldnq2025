@@ -40,7 +40,7 @@
     </building>
     <verbs>
       <li>
-        <verbClass>Verb_Shoot</verbClass>
+        <verbClass>Verse.Verb_Shoot</verbClass>
         <hasStandardCommand>true</hasStandardCommand>
         <defaultProjectile>Bullet_Ray</defaultProjectile>
         <ticksBetweenBurstShots>60</ticksBetweenBurstShots>
@@ -49,7 +49,6 @@
         <warmupTime>0.5</warmupTime>
       </li>
     </verbs>
-    <researchPrerequisite>EnergyTrapTech</researchPrerequisite>
     <costList>
       <Steel>100</Steel>
       <ComponentIndustrial>5</ComponentIndustrial>
@@ -88,7 +87,7 @@
     </statBases>
     <verbs>
       <li>
-        <verbClass>Verb_Shoot</verbClass>
+        <verbClass>Verse.Verb_Shoot</verbClass>
         <hasStandardCommand>true</hasStandardCommand>
         <defaultProjectile>Bullet_Ray</defaultProjectile>
         <ticksBetweenBurstShots>60</ticksBetweenBurstShots>
@@ -100,16 +99,4 @@
   </ThingDef>
 
   <ThingDef>
-    <defName>Bullet_Ray</defName>
-    <label>ray shot</label>
-    <graphicData>
-      <texPath>Things/Projectile/Charge</texPath>
-      <graphicClass>Graphic_Single</graphicClass>
-    </graphicData>
-    <projectile>
-      <damageDef>StunCustomDamage</damageDef>
-      <damageAmountBase>1</damageAmountBase>
-      <speed>70</speed>
-    </projectile>
-  </ThingDef>
-</Defs>
+   
