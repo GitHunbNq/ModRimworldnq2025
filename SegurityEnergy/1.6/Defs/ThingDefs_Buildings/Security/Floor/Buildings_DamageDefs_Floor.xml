@@ -2,12 +2,11 @@
 <Defs>
   <DamageDef>
     <defName>StunCustomDamage</defName>
-    <label>stun custom Floor</label>
-	<workerClass>SecurityEnergy.DamageWorker_Stun</workerClass>
-    <isRanged>true</isRanged>
+    <label>energy stun</label>
+    <workerClass>SegurityEnergy.DamageWorker_Stun</workerClass>
+    <isRanged>false</isRanged> <!-- Direct damage for traps -->
     <makesBlood>false</makesBlood>
     <externalViolence>true</externalViolence>
-	<hediff>Burn</hediff>
- 
+    <hediff>StunCustom</hediff>
   </DamageDef>
 </Defs>
