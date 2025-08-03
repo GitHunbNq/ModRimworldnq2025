@@ -228,7 +228,7 @@ namespace SegurityEnergy
             }
         }
     }
-    public class Building_RayTurret : Building_TurretGun
+	public class Building_RayTurret : Building_TurretGun
     {
         private CompRechargeable rechargeableComp;
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -236,19 +236,22 @@ namespace SegurityEnergy
             base.SpawnSetup(map, respawningAfterLoad);
             this.rechargeableComp = this.GetComp<CompRechargeable>();
         }
-        protected override void Tick()
-        {
-            base.Tick();
-            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 &&
-                this.CurrentTarget != null && this.CurrentTarget.IsValid)
-            {
-                // Se corrigió el método de disparo para que coincida con la API 1.6
-                if (this.gun.TryStartCastOn(this.CurrentTarget))
-                {
-                    this.rechargeableComp.TryUseCharge();
-                }
-            }
-        }
+		protected override void Tick()
+		{
+			base.Tick();
+
+			if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 &&
+				this.CurrentTarget != null && this.CurrentTarget.IsValid)
+			{
+				// Accedemos al Verb principal del arma
+				Verb verb = this.gun.TryGetComp<CompEquippable>()?.PrimaryVerb;
+
+				if (verb != null && verb.TryStartCastOn(this.CurrentTarget, false, true))
+				{
+					this.rechargeableComp.TryUseCharge();
+				}
+			}
+		}
     }
     public class Building_StunPanel : Building
     {
