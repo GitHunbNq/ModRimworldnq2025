@@ -3,18 +3,18 @@
   <HediffDef>
     <defName>StunCustom</defName>
     <label>aturdimiento eléctrico</label>
-    <description>Un rayo aturdidor lo golpeó de lleno, dejándolo inconsciente por aproximadamente tres minutos.</description>
+    <description>Un rayo aturdidor lo golpeó de lleno, dejándolo inmóvil y desorientado mientras sus habilidades se desvanecen por tres minutos.</description>
     <hediffClass>HediffWithComps</hediffClass>
     <defaultLabelColor>(255, 255, 0)</defaultLabelColor>
     <stages>
       <li>
-        <label>inconsciente</label>
+        <label>aturdido</label>
         <minSeverity>0</minSeverity>
         <painOffset>0.2</painOffset>
         <capMods>
           <li>
             <capacity>Consciousness</capacity>
-            <setMax>0</setMax>
+            <offset>-0.3</offset>
           </li>
           <li>
             <capacity>Moving</capacity>

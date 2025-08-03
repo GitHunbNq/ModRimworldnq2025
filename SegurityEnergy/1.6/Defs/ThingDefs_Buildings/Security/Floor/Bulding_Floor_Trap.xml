@@ -55,7 +55,7 @@
     <designatorDropdown>SecurityTraps</designatorDropdown>
     <altitudeLayer>Building</altitudeLayer>
     <tickerType>Normal</tickerType>
-    <researchPrerequisite>EnergyTrapTech</researchPrerequisite>
+<!--     <researchPrerequisite>EnergyTrapTech</researchPrerequisite> -->
     <costList>
       <Steel>25</Steel>
       <ComponentIndustrial>1</ComponentIndustrial>
@@ -117,7 +117,7 @@
     <designatorDropdown>SecurityTraps</designatorDropdown>
     <altitudeLayer>Building</altitudeLayer>
     <tickerType>Normal</tickerType>
-    <researchPrerequisite>EnergyTrapTech</researchPrerequisite>
+<!--     <researchPrerequisite>EnergyTrapTech</researchPrerequisite> -->
     <costList>
       <Steel>25</Steel>
       <ComponentIndustrial>1</ComponentIndustrial>

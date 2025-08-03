@@ -1,7 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
-using Verse.AI; // Required for Verb and TryStartCastOn
+using Verse.AI;
 using Verse.Sound;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,57 @@ namespace SegurityEnergy
 
     public class CompStunnable : ThingComp
     {
-        private CompPropertiesubeClass>CompStunnable);
+        private CompProperties_Stunnable Props => (CompProperties_Stunnable)this.props;
+        private int empTicks;
+        public override void CompTick()
+        {
+            base.CompTick();
+            if (this.parent.Spawned && this.empTicks > 0)
+            {
+                this.empTicks--;
+                if (this.empTicks == 0)
+                {
+                    if (this.Props.useLargeEMPEffecter)
+                    {
+                        GenExplosion.DoExplosion(
+                            center: this.parent.Position,
+                            map: this.parent.Map,
+                            radius: 5f,
+                            damType: DamageDefOf.EMP,
+                            instigator: null,
+                            damAmount: -1,
+                            armorPenetration: -1f,
+                            explosionSound: null,
+                            weapon: null,
+                            projectile: null,
+                            intendedTarget: null,
+                            doVisualEffects: true,
+                            propagationSpeed: 0.6f,
+                            excludeRadius: 0f,
+                            affectedAngle: null,
+                            doSoundEffects: true
+                        );
+                    }
+                    else
+                    {
+                        FleckMaker.Static(this.parent.Position, this.parent.Map, FleckDefOf.PsycastAreaEffect, 0.5f);
+                    }
+                }
+            }
+        }
+
+        public override void PostPreApplyDamage(ref DamageInfo dinfo, out bool absorbed)
+        {
+            absorbed = false;
+            if (this.Props.affectedDamageDefs != null && this.Props.affectedDamageDefs.Contains(dinfo.Def))
+            {
+                this.empTicks += (int)(dinfo.Amount * 10f);
+                absorbed = true;
+                if (this.empTicks > 600)
+                {
+                    this.empTicks = 600;
+                }
+            }
         }
     }
 
