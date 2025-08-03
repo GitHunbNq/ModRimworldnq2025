@@ -21,57 +21,7 @@ namespace SegurityEnergy
 
     public class CompStunnable : ThingComp
     {
-        private CompProperties_Stunnable Props => (CompProperties_Stunnable)this.props;
-        private int empTicks;
-        public override void CompTick()
-        {
-            base.CompTick();
-            if (this.parent.Spawned && this.empTicks > 0)
-            {
-                this.empTicks--;
-                if (this.empTicks == 0)
-                {
-                    if (this.Props.useLargeEMPEffecter)
-                    {
-                        GenExplosion.DoExplosion(
-                            center: this.parent.Position,
-                            map: this.parent.Map,
-                            radius: 5f,
-                            damType: DamageDefOf.EMP,
-                            instigator: null,
-                            damAmount: -1,
-                            armorPenetration: -1f,
-                            explosionSound: null,
-                            weapon: null,
-                            projectile: null,
-                            intendedTarget: null,
-                            doVisualEffects: true,
-                            propagationSpeed: 0.6f,
-                            excludeRadius: 0f,
-                            affectedAngle: null,
-                            doSound: true
-                        );
-                    }
-                    else
-                    {
-                        FleckMaker.Static(this.parent.Position, this.parent.Map, FleckDefOf.PsycastAreaEffect, 0.5f);
-                    }
-                }
-            }
-        }
-
-        public override void PostPreApplyDamage(ref DamageInfo dinfo, out bool absorbed)
-        {
-            absorbed = false;
-            if (this.Props.affectedDamageDefs != null && this.Props.affectedDamageDefs.Contains(dinfo.Def))
-            {
-                this.empTicks += (int)(dinfo.Amount * 10f);
-                absorbed = true;
-                if (this.empTicks > 600)
-                {
-                    this.empTicks = 600;
-                }
-            }
+        private CompPropertiesubeClass>CompStunnable);
         }
     }
 
@@ -110,7 +60,8 @@ namespace SegurityEnergy
         private void ApplyStunEffects(Pawn pawn, DamageInfo dinfo)
         {
             bool isTrap = dinfo.Instigator is Building_FloorStunTrap || dinfo.Instigator is Building_FloorRayTrap;
-            Log.Message($"[SegurityEnergy] Applying StunCustom to {pawn.Name} via {(isTrap ? "Trap" : "Turret/Panel")}");
+            bool isTurret = dinfo.Instigator is Building_RayTurret;
+            Log.Message($"[SegurityEnergy] Applying StunCustom to {pawn.Name} via {(isTrap ? "Trap" : isTurret ? "Turret" : "Unknown")}");
             Hediff stunHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("StunCustom", false), pawn);
             if (stunHediff != null)
             {
@@ -121,14 +72,18 @@ namespace SegurityEnergy
             {
                 Log.Error($"[SegurityEnergy] StunCustom hediff not found in DefDatabase.");
             }
-            if (isTrap)
+            if (pawn.Map != null)
             {
-                if (pawn.Map != null)
+                if (isTrap || isTurret)
                 {
                     MoteMaker.MakeStaticMote(pawn.Position, pawn.Map, ThingDef.Named("Mote_BeamRepeaterLaser"), 1f);
                 }
+                else
+                {
+                    FleckMaker.Static(pawn.Position, pawn.Map, FleckDefOf.ShotFlash, 10f);
+                }
             }
-            else
+            if (!isTrap && !isTurret)
             {
                 float maxHealth = pawn.health.capacities.GetLevel(PawnCapacityDefOf.Consciousness) * 100f;
                 float damageAmount = maxHealth * 0.2f;
@@ -307,6 +262,11 @@ namespace SegurityEnergy
                 }
             }
         }
+
+        public override string GetInspectString()
+        {
+            return rechargeableComp?.CompInspectStringExtra() ?? "Carga: 0/5\nNo Power";
+        }
     }
 
     public class Building_FloorRayTrap : Building_Trap
@@ -352,10 +312,6 @@ namespace SegurityEnergy
                         {
                             DamageInfo dinfo = new DamageInfo(myStunDamageDef, 1f, 0f, -1f, this);
                             p.TakeDamage(dinfo);
-                            if (this.Map != null)
-                            {
-                                MoteMaker.MakeStaticMote(p.Position, this.Map, ThingDef.Named("Mote_BeamRepeaterLaser"), 1f);
-                            }
                             Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} stunned {p.Name}");
                         }
                         else
@@ -369,16 +325,7 @@ namespace SegurityEnergy
 
         public override string GetInspectString()
         {
-            string baseString = base.GetInspectString();
-            string chargeStatus = $"Ray Ammo: {rechargeableComp?.CurrentCharge ?? 0}/{rechargeableComp?.MaxCharge ?? 5}";
-            string rechargeStatus = rechargeableComp?.CompInspectStringExtra() ?? "No Power";
-            return $"{baseString}\n{chargeStatus}\n{rechargeStatus}";
-        }
-
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            // No Scribe_References for CompRechargeable, as its fields are saved in CompRechargeable.PostExposeData
+            return rechargeableComp?.CompInspectStringExtra() ?? "Carga: 0/5\nNo Power";
         }
     }
 
@@ -413,6 +360,11 @@ namespace SegurityEnergy
                                 $"Verb: {this.AttackVerb != null}, Target: {this.CurrentTarget.Thing?.Label ?? "null"}");
                 }
             }
+        }
+
+        public override string GetInspectString()
+        {
+            return rechargeableComp?.CompInspectStringExtra() ?? "Carga: 0/5\nNo Power";
         }
     }
 }
