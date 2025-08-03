@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BaseTurret">
+    <defName>RayTurret</defName>
+    <label>Ray Turret</label>
+    <description>A turret that fires stunning energy rays at enemies, powered by a rechargeable energy source.</description>
+    <graphicData>
+      <texPath>Things/Building/Security/TurretGun</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+    </graphicData>
+    <uiIconPath>UI/RayTurret_UI</uiIconPath>
+    <statBases>
+      <MaxHitPoints>200</MaxHitPoints>
+      <Beauty>-10</Beauty>
+      <WorkToBuild>5000</WorkToBuild>
+      <ShootingAccuracy>0.95</ShootingAccuracy>
+    </statBases>
+    <thingClass>SegurityEnergy.Building_RayTurret</thingClass>
+    <category>Building</category>
+    <altitudeLayer>Building</altitudeLayer>
+    <tickerType>Normal</tickerType>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>350</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="SegurityEnergy.CompProperties_Rechargeable">
+        <maxCharge>5</maxCharge>
+        <ticksToRechargeOneCharge>180</ticksToRechargeOneCharge>
+        <energyConsumptionWhenCharging>400</energyConsumptionWhenCharging>
+        <energyConsumptionWhenFull>350</energyConsumptionWhenFull>
+      </li>
+    </comps>
+    <building>
+      <turretGunDef>Gun_TurretRay</turretGunDef>
+      <turretBurstWarmupTime>0.5</turretBurstWarmupTime>
+      <turretBurstCooldownTime>2.0</turretBurstCooldownTime>
+    </building>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Bullet_Ray</defaultProjectile>
+        <ticksBetweenBurstShots>60</ticksBetweenBurstShots>
+        <burstShotCount>1</burstShotCount>
+        <range>24.9</range>
+        <warmupTime>0.5</warmupTime>
+      </li>
+    </verbs>
+    <researchPrerequisite>EnergyTrapTech</researchPrerequisite>
+    <costList>
+      <Steel>100</Steel>
+      <ComponentIndustrial>5</ComponentIndustrial>
+    </costList>
+    <size>(2,2)</size>
+    <passability>Impassable</passability>
+    <fillPercent>1.0</fillPercent>
+    <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+    <designationCategory>Security</designationCategory>
+    <designatorDropdown>SecurityTurrets</designatorDropdown>
+  </ThingDef>
+
+  <ThingDef Name="BaseTurret" Abstract="True">
+    <category>Building</category>
+    <altitudeLayer>Building</altitudeLayer>
+    <useHitPoints>true</useHitPoints>
+    <selectable>true</selectable>
+    <tickerType>Normal</tickerType>
+  </ThingDef>
+
+  <ThingDef>
+    <defName>Gun_TurretRay</defName>
+    <label>ray turret gun</label>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/ChargeBlaster</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <WorkToMake>1800</WorkToMake>
+      <Mass>10</Mass>
+      <AccuracyTouch>0.95</AccuracyTouch>
+      <AccuracyShort>0.90</AccuracyShort>
+      <AccuracyMedium>0.85</AccuracyMedium>
+      <AccuracyLong>0.80</AccuracyLong>
+      <RangedWeapon_Cooldown>2.0</RangedWeapon_Cooldown>
+    </statBases>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Bullet_Ray</defaultProjectile>
+        <ticksBetweenBurstShots>60</ticksBetweenBurstShots>
+        <burstShotCount>1</burstShotCount>
+        <range>24.9</range>
+        <warmupTime>0.5</warmupTime>
+      </li>
+    </verbs>
+  </ThingDef>
+
+  <ThingDef>
+    <defName>Bullet_Ray</defName>
+    <label>ray shot</label>
+    <graphicData>
+      <texPath>Things/Projectile/Charge</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>StunCustomDamage</damageDef>
+      <damageAmountBase>1</damageAmountBase>
+      <speed>70</speed>
+    </projectile>
+  </ThingDef>
+</Defs>

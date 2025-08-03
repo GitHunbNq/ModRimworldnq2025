@@ -1,7 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
-using Verse.AI; // Added for TryStartCastOn
+using Verse.AI; // Required for Verb and TryStartCastOn
 using Verse.Sound;
 using System.Collections.Generic;
 using System.Linq;
@@ -180,6 +180,10 @@ namespace SegurityEnergy
         {
             base.PostSpawnSetup(respawningAfterLoad);
             this.powerComp = this.parent.GetComp<CompPowerTrader>();
+            if (this.powerComp == null)
+            {
+                Log.Error($"[SegurityEnergy] CompRechargeable at {this.parent.Position} failed to find CompPowerTrader.");
+            }
             if (!respawningAfterLoad)
             {
                 currentCharge = 0;
@@ -189,25 +193,28 @@ namespace SegurityEnergy
         public override void CompTick()
         {
             base.CompTick();
-            if (this.powerComp != null)
+            if (this.powerComp == null)
             {
-                if (currentCharge < MaxCharge)
-                {
-                    this.powerComp.PowerOutput = -Props.energyConsumptionWhenCharging;
-                }
-                else
-                {
-                    this.powerComp.PowerOutput = -Props.energyConsumptionWhenFull;
-                }
+                Log.Warning($"[SegurityEnergy] CompRechargeable at {this.parent.Position} has null powerComp.");
+                return;
+            }
+            if (currentCharge < MaxCharge)
+            {
+                this.powerComp.PowerOutput = -Props.energyConsumptionWhenCharging;
+            }
+            else
+            {
+                this.powerComp.PowerOutput = -Props.energyConsumptionWhenFull;
             }
 
-            if (currentCharge < MaxCharge && this.powerComp != null && this.powerComp.PowerOn)
+            if (currentCharge < MaxCharge && this.powerComp.PowerOn)
             {
                 ticksSinceLastUse++;
                 if (ticksSinceLastUse >= Props.ticksToRechargeOneCharge)
                 {
                     currentCharge++;
                     ticksSinceLastUse = 0;
+                    Log.Message($"[SegurityEnergy] CompRechargeable at {this.parent.Position} recharged to {currentCharge}/{MaxCharge}");
                 }
             }
         }
@@ -225,8 +232,10 @@ namespace SegurityEnergy
             {
                 currentCharge--;
                 ticksSinceLastUse = 0;
+                Log.Message($"[SegurityEnergy] CompRechargeable at {this.parent.Position} used charge. Remaining: {currentCharge}/{MaxCharge}");
                 return true;
             }
+            Log.Message($"[SegurityEnergy] CompRechargeable at {this.parent.Position} failed to use charge: {currentCharge}/{MaxCharge}");
             return false;
         }
 
@@ -390,13 +399,18 @@ namespace SegurityEnergy
         protected override void Tick()
         {
             base.Tick();
-            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 &&
+            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 && this.AttackVerb != null &&
                 this.CurrentTarget != null && this.CurrentTarget.IsValid)
             {
-                if (this.gun != null && this.gun.TryStartCastOn(this.CurrentTarget))
+                if (this.AttackVerb.TryStartCastOn(this.CurrentTarget, surpriseAttack: false, canHitNonTargetPawns: true, preventFriendlyFire: false))
                 {
                     this.rechargeableComp.TryUseCharge();
                     Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} fired at {this.CurrentTarget.Thing?.Label ?? "null"}");
+                }
+                else
+                {
+                    Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} failed to fire: " +
+                                $"Verb: {this.AttackVerb != null}, Target: {this.CurrentTarget.Thing?.Label ?? "null"}");
                 }
             }
         }
