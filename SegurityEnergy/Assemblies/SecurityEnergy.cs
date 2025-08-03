@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using UnityEngine;
 using Verse;
+using Verse.AI; // Added for TryStartCastOn
 using Verse.Sound;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace SegurityEnergy
             this.compClass = typeof(CompStunnable);
         }
     }
+
     public class CompStunnable : ThingComp
     {
         private CompProperties_Stunnable Props => (CompProperties_Stunnable)this.props;
@@ -29,10 +31,26 @@ namespace SegurityEnergy
                 this.empTicks--;
                 if (this.empTicks == 0)
                 {
-                    // La firma de GenExplosion.DoExplosion se ha actualizado para 1.6
                     if (this.Props.useLargeEMPEffecter)
                     {
-                        GenExplosion.DoExplosion(this.parent.Position, this.parent.Map, 5f, DamageDefOf.EMP, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, GasType.BlindSmoke);
+                        GenExplosion.DoExplosion(
+                            center: this.parent.Position,
+                            map: this.parent.Map,
+                            radius: 5f,
+                            damType: DamageDefOf.EMP,
+                            instigator: null,
+                            damAmount: -1,
+                            armorPenetration: -1f,
+                            explosionSound: null,
+                            weapon: null,
+                            projectile: null,
+                            intendedTarget: null,
+                            doVisualEffects: true,
+                            propagationSpeed: 0.6f,
+                            excludeRadius: 0f,
+                            affectedAngle: null,
+                            doSound: true
+                        );
                     }
                     else
                     {
@@ -41,10 +59,11 @@ namespace SegurityEnergy
                 }
             }
         }
+
         public override void PostPreApplyDamage(ref DamageInfo dinfo, out bool absorbed)
         {
             absorbed = false;
-            if (this.Props.affectedDamageDefs.Contains(dinfo.Def))
+            if (this.Props.affectedDamageDefs != null && this.Props.affectedDamageDefs.Contains(dinfo.Def))
             {
                 this.empTicks += (int)(dinfo.Amount * 10f);
                 absorbed = true;
@@ -55,6 +74,7 @@ namespace SegurityEnergy
             }
         }
     }
+
     public class DamageWorker_Stun : DamageWorker
     {
         private const float WetGroundRadius = 3f;
@@ -65,8 +85,8 @@ namespace SegurityEnergy
             {
                 Map map = pawn.Map;
                 bool isWetGround = IsGroundWet(pawn.Position, map);
-                bool isTrap = dinfo.Instigator is Building_FloorStunTrap;
-                if (isWetGround && !isTrap) 
+                bool isTrap = dinfo.Instigator is Building_FloorStunTrap || dinfo.Instigator is Building_FloorRayTrap;
+                if (isWetGround && !isTrap)
                 {
                     FleckMaker.Static(pawn.Position, map, FleckDefOf.ShotFlash, 10f);
                     foreach (Thing thing in GenRadial.RadialDistinctThingsAround(pawn.Position, map, WetGroundRadius, true))
@@ -86,13 +106,21 @@ namespace SegurityEnergy
             }
             return result;
         }
+
         private void ApplyStunEffects(Pawn pawn, DamageInfo dinfo)
         {
-            bool isTrap = dinfo.Instigator is Building_FloorStunTrap;
-            Log.Message($"Applying StunCustom to {pawn.Name} via {(isTrap ? "FloorStunTrap" : "Turret/Panel")}");
-            Hediff stunHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("StunCustom"), pawn);
-            stunHediff.Severity = 1f;
-            pawn.health.AddHediff(stunHediff, null, dinfo);
+            bool isTrap = dinfo.Instigator is Building_FloorStunTrap || dinfo.Instigator is Building_FloorRayTrap;
+            Log.Message($"[SegurityEnergy] Applying StunCustom to {pawn.Name} via {(isTrap ? "Trap" : "Turret/Panel")}");
+            Hediff stunHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("StunCustom", false), pawn);
+            if (stunHediff != null)
+            {
+                stunHediff.Severity = 1f;
+                pawn.health.AddHediff(stunHediff, null, dinfo);
+            }
+            else
+            {
+                Log.Error($"[SegurityEnergy] StunCustom hediff not found in DefDatabase.");
+            }
             if (isTrap)
             {
                 if (pawn.Map != null)
@@ -103,17 +131,21 @@ namespace SegurityEnergy
             else
             {
                 float maxHealth = pawn.health.capacities.GetLevel(PawnCapacityDefOf.Consciousness) * 100f;
-                float damageAmount = maxHealth * 0.2f; 
+                float damageAmount = maxHealth * 0.2f;
                 DamageInfo stunDinfo = new DamageInfo(DamageDefOf.Blunt, damageAmount, 0f, -1f, dinfo.Instigator);
                 pawn.TakeDamage(stunDinfo);
                 DamageInfo cutDinfo = new DamageInfo(DamageDefOf.Cut, 2f, 0f, -1f, dinfo.Instigator, pawn.RaceProps.body.corePart);
                 pawn.TakeDamage(cutDinfo);
-                Hediff burnHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Burn"), pawn, pawn.RaceProps.body.corePart);
-                burnHediff.Severity = 0.1f;
-                pawn.health.AddHediff(burnHediff);
+                Hediff burnHediff = HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Burn", false), pawn, pawn.RaceProps.body.corePart);
+                if (burnHediff != null)
+                {
+                    burnHediff.Severity = 0.1f;
+                    pawn.health.AddHediff(burnHediff);
+                }
             }
             pawn.health.capacities.Notify_CapacityLevelsDirty();
         }
+
         private bool IsGroundWet(IntVec3 position, Map map)
         {
             if (map == null) return false;
@@ -143,16 +175,20 @@ namespace SegurityEnergy
         private int ticksSinceLastUse = 0;
         public int CurrentCharge => currentCharge;
         public int MaxCharge => Props.maxCharge;
+
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
             this.powerComp = this.parent.GetComp<CompPowerTrader>();
+            if (!respawningAfterLoad)
+            {
+                currentCharge = 0;
+            }
         }
 
         public override void CompTick()
         {
             base.CompTick();
-            
             if (this.powerComp != null)
             {
                 if (currentCharge < MaxCharge)
@@ -175,7 +211,7 @@ namespace SegurityEnergy
                 }
             }
         }
-        
+
         public override void PostExposeData()
         {
             base.PostExposeData();
@@ -193,9 +229,19 @@ namespace SegurityEnergy
             }
             return false;
         }
+
         public override string CompInspectStringExtra()
         {
-            return "Carga: " + (currentCharge * 100 / MaxCharge) + "% (" + currentCharge + "/" + MaxCharge + ")";
+            if (powerComp == null || !powerComp.PowerOn)
+            {
+                return $"Carga: {currentCharge}/{MaxCharge}\nNo Power";
+            }
+            if (currentCharge < MaxCharge && ticksSinceLastUse > 0)
+            {
+                float rechargePercent = (ticksSinceLastUse / (float)Props.ticksToRechargeOneCharge) * 100f;
+                return $"Carga: {currentCharge}/{MaxCharge}\nCharging: {rechargePercent:F0}%";
+            }
+            return $"Carga: {currentCharge}/{MaxCharge}\n{(currentCharge == MaxCharge ? "Fully Charged" : "Ready to Recharge")}";
         }
     }
 
@@ -203,61 +249,154 @@ namespace SegurityEnergy
     {
         private CompRechargeable rechargeableComp;
         private const float AoERadius = 2f;
+
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
             this.rechargeableComp = this.GetComp<CompRechargeable>();
+            if (this.rechargeableComp == null)
+            {
+                Log.Error($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} failed to initialize CompRechargeable.");
+            }
         }
 
-        // Se usa SpringSub en lugar de CheckSpring en RimWorld 1.6
         protected override void SpringSub(Pawn p)
         {
-            if (rechargeableComp != null && rechargeableComp.TryUseCharge())
+            if (p == null || p.Dead || !p.HostileTo(this.Faction) || rechargeableComp == null || !rechargeableComp.TryUseCharge())
             {
-                ApplyAreaEffect();
-                // Si el sonido no existe, crea un SoundDef en tu XML o usa uno predeterminado
-                SoundDefOf.TrapSpike_Activate.PlayOneShot(new TargetInfo(base.Position, base.Map, false));
+                Log.Message($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} failed to activate: " +
+                            $"Pawn: {p?.Name.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
+                            $"Charge: {rechargeableComp?.CurrentCharge ?? 0}");
+                return;
             }
+
+            ApplyAreaEffect();
+            SoundDefOf.TrapSpring.PlayOneShot(new TargetInfo(this.Position, this.Map));
         }
 
         private void ApplyAreaEffect()
         {
-            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(base.Position, base.Map, AoERadius, true))
+            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(this.Position, this.Map, AoERadius, true))
             {
-                Pawn p = thing as Pawn;
-                if (p != null)
+                if (thing is Pawn p && !p.Dead && !p.Downed)
                 {
                     bool isTarget = p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer));
                     if (isTarget)
                     {
-                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", true);
-                        DamageInfo dinfo = new DamageInfo(myStunDamageDef, 0f, 0f, -1f, this);
-                        p.TakeDamage(dinfo);
+                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", false);
+                        if (myStunDamageDef != null)
+                        {
+                            DamageInfo dinfo = new DamageInfo(myStunDamageDef, 1f, 0f, -1f, this);
+                            p.TakeDamage(dinfo);
+                            Log.Message($"[SegurityEnergy] Building_FloorStunTrap at {this.Position} stunned {p.Name}");
+                        }
+                        else
+                        {
+                            Log.Error($"[SegurityEnergy] StunCustomDamage not found in DefDatabase.");
+                        }
                     }
                 }
             }
         }
     }
 
-    public class Building_RayTurret : Building_TurretGun
+    public class Building_FloorRayTrap : Building_Trap
     {
         private CompRechargeable rechargeableComp;
+        private const float AoERadius = 2f;
+
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
             this.rechargeableComp = this.GetComp<CompRechargeable>();
+            if (this.rechargeableComp == null)
+            {
+                Log.Error($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} failed to initialize CompRechargeable.");
+            }
         }
 
-        public override void Tick()
+        protected override void SpringSub(Pawn p)
+        {
+            if (p == null || p.Dead || !p.HostileTo(this.Faction) || rechargeableComp == null || !rechargeableComp.TryUseCharge())
+            {
+                Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} failed to activate: " +
+                            $"Pawn: {p?.Name.ToString() ?? "null"}, Dead: {p?.Dead ?? false}, Hostile: {p?.HostileTo(this.Faction) ?? false}, " +
+                            $"Charge: {rechargeableComp?.CurrentCharge ?? 0}");
+                return;
+            }
+
+            ApplyAreaEffect();
+            SoundDefOf.TrapSpring.PlayOneShot(new TargetInfo(this.Position, this.Map));
+        }
+
+        private void ApplyAreaEffect()
+        {
+            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(this.Position, this.Map, AoERadius, true))
+            {
+                if (thing is Pawn p && !p.Dead && !p.Downed)
+                {
+                    bool isTarget = p.IsPrisonerOfColony || (p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer)) || (p.RaceProps.Animal && p.HostileTo(Faction.OfPlayer));
+                    if (isTarget)
+                    {
+                        DamageDef myStunDamageDef = DefDatabase<DamageDef>.GetNamed("StunCustomDamage", false);
+                        if (myStunDamageDef != null)
+                        {
+                            DamageInfo dinfo = new DamageInfo(myStunDamageDef, 1f, 0f, -1f, this);
+                            p.TakeDamage(dinfo);
+                            if (this.Map != null)
+                            {
+                                MoteMaker.MakeStaticMote(p.Position, this.Map, ThingDef.Named("Mote_BeamRepeaterLaser"), 1f);
+                            }
+                            Log.Message($"[SegurityEnergy] Building_FloorRayTrap at {this.Position} stunned {p.Name}");
+                        }
+                        else
+                        {
+                            Log.Error($"[SegurityEnergy] StunCustomDamage not found in DefDatabase.");
+                        }
+                    }
+                }
+            }
+        }
+
+        public override string GetInspectString()
+        {
+            string baseString = base.GetInspectString();
+            string chargeStatus = $"Ray Ammo: {rechargeableComp?.CurrentCharge ?? 0}/{rechargeableComp?.MaxCharge ?? 5}";
+            string rechargeStatus = rechargeableComp?.CompInspectStringExtra() ?? "No Power";
+            return $"{baseString}\n{chargeStatus}\n{rechargeStatus}";
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            // No Scribe_References for CompRechargeable, as its fields are saved in CompRechargeable.PostExposeData
+        }
+    }
+
+    public class Building_RayTurret : Building_TurretGun
+    {
+        private CompRechargeable rechargeableComp;
+
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+            base.SpawnSetup(map, respawningAfterLoad);
+            this.rechargeableComp = this.GetComp<CompRechargeable>();
+            if (this.rechargeableComp == null)
+            {
+                Log.Error($"[SegurityEnergy] Building_RayTurret at {this.Position} failed to initialize CompRechargeable.");
+            }
+        }
+
+        protected override void Tick()
         {
             base.Tick();
-            // Lógica de disparo y gasto de carga
-            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 && 
-                this.Targeter.Target != null && this.Targeter.Target.IsValid)
+            if (this.rechargeableComp != null && this.rechargeableComp.CurrentCharge > 0 &&
+                this.CurrentTarget != null && this.CurrentTarget.IsValid)
             {
-                if (this.gun.TryStartShootInManualCastMode(this.Targeter.Target, true))
+                if (this.gun != null && this.gun.TryStartCastOn(this.CurrentTarget))
                 {
                     this.rechargeableComp.TryUseCharge();
+                    Log.Message($"[SegurityEnergy] Building_RayTurret at {this.Position} fired at {this.CurrentTarget.Thing?.Label ?? "null"}");
                 }
             }
         }
